@@ -1,9 +1,9 @@
 ﻿using System;
 
-class Zmogus //Task0
+class Zmogus //Task1
 {
-    public string Name = "";
-    public int Age;
+    public string Name { get; set; }
+    public int Age { get; set; }    
 
     public Zmogus(string name, int age)
     {
@@ -20,12 +20,17 @@ class Programs
 {
     static void Main()
     {
-        Zmogus p1 = new Zmogus("Artur", 29);
-        Zmogus p2 = new Zmogus("Tomas", 30);
-
-        p1.Introduce();
-        p2.Introduce();
-        
+        Zmogus[] zmones = new Zmogus[]
+        {
+        new Zmogus("Artur", 29),
+        new Zmogus("Tomas", 30),
+        new Zmogus("Vaida", 26)
+        };
+        foreach (Zmogus z in zmones)
+    {
+       z.Introduce();
     }
+    }
+    
 
   }
