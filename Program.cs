@@ -1,6 +1,6 @@
 ﻿using System;
 
-class Zmogus //Task1
+class Zmogus //Task3   
 {
     public string Name { get; set; }
     public int Age { get; set; }    
@@ -8,11 +8,22 @@ class Zmogus //Task1
     public Zmogus(string name, int age)
     {
         Name = name;
+        if (age < 0)
+        {
+            Console.WriteLine("am=ius negali būti neigimas");
+            age = 0;
+         }
         Age = age;
     }
     public void Introduce()
     {
-        Console.WriteLine($"Sveiki, mano vardas {Name}, man yra {Age} metų");
+        if (Age != 0)
+        {
+            Console.WriteLine($"Sveiki, mano vardas {Name}, man yra {Age} metų");
+        }
+        else {
+            Console.WriteLine($"Sveiki, mano vardas {Name}, amžius nenurodytas");
+        }
     }
   }
 
@@ -24,7 +35,8 @@ class Programs
         {
         new Zmogus("Artur", 29),
         new Zmogus("Tomas", 30),
-        new Zmogus("Vaida", 26)
+        new Zmogus("Vaida", 26),
+        new Zmogus("Ignas",-10)
         };
         foreach (Zmogus z in zmones)
     {
