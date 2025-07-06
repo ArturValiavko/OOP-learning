@@ -1,29 +1,31 @@
 ﻿using System;
 
-class žmogus //Task0
+class Zmogus //Task0
 {
-    public string name = "";
-    public int age;
+    public string Name = "";
+    public int Age;
 
+    public Zmogus(string name, int age)
+    {
+        Name = name;
+        Age = age;
+    }
     public void Introduce()
     {
-        Console.WriteLine($"Sveiki, mano vardas {name}, man yra {age} metų");
-     }
+        Console.WriteLine($"Sveiki, mano vardas {Name}, man yra {Age} metų");
+    }
   }
 
 class Programs
 {
     static void Main()
     {
-        žmogus persone1 = new žmogus();
-        žmogus persone2 = new žmogus();
-        persone1.name = "Artur";
-        persone2.name = "Tomas";
-        persone1.age = 29;
-        persone2.age = 33;
+        Zmogus p1 = new Zmogus("Artur", 29);
+        Zmogus p2 = new Zmogus("Tomas", 30);
 
-        persone1.Introduce();
-        persone2.Introduce();
+        p1.Introduce();
+        p2.Introduce();
+        
     }
 
   }
