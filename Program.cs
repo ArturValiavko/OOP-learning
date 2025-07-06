@@ -22,27 +22,29 @@ class Zmogus //Task3
         if (Age != 0)
         {
             Console.WriteLine($"Sveiki, mano vardas {Name}, man yra {Age} metų");
-            arpilnametis();
+           
         }
         else
         {
             Console.WriteLine($"Sveiki, mano vardas {Name}, amžius nenurodytas");
         }
     }
-    public void arpilnametis()
+    public void ArPilnametis()
     {
-
-        if (Age < 18)
+        if (Age != 0)
         {
-            Console.WriteLine("Nepilnametis");
+            if (Age < 18)
+            {
+                Console.WriteLine("Nepilnametis");
+            }
+            else { Console.WriteLine("Pilnametis"); }
         }
-        else { Console.WriteLine("Pilnametis"); }
     }
 }    
     
 
 
-class Programs
+class Program
 {
     static void Main()
     {
@@ -55,7 +57,8 @@ class Programs
         };
         foreach (Zmogus z in zmones)
     {
-       z.Introduce();
+            z.Introduce();
+            z.ArPilnametis();
     }
     }
     
