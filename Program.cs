@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Reflection;
 using System.Reflection.Metadata;
+using System.Reflection.Metadata.Ecma335;
 
-class Zmogus //Task4   
+class Zmogus //Task5  
 {
     public string Name { get; set; }
     public int Age { get; set; }
@@ -12,35 +14,26 @@ class Zmogus //Task4
         Name = name;
         if (age < 0)
         {
-            Console.WriteLine("amžius negali būti neigimas");
+            Console.WriteLine("Amžius negali būti neigiamas");
             age = 0;
         }
         Age = age;
     }
-    public void Introduce()
+      public string GetInfo()
     {
-        if (Age != 0)
+        if (Age == 0)
         {
-            Console.WriteLine($"Sveiki, mano vardas {Name}, man yra {Age} metų");
-           
+            return $"Mano vardas {Name}, amžius Nenurodytas";
         }
         else
         {
-            Console.WriteLine($"Sveiki, mano vardas {Name}, amžius nenurodytas");
+            return $"Mano vardas {Name}, man yra {Age} metų";
         }
-    }
-    public void ArPilnametis()
-    {
-        if (Age != 0)
-        {
-            if (Age < 18)
-            {
-                Console.WriteLine("Nepilnametis");
-            }
-            else { Console.WriteLine("Pilnametis"); }
-        }
+
+
     }
 }    
+
     
 
 
@@ -48,18 +41,25 @@ class Program
 {
     static void Main()
     {
-       List<Zmogus> zmones = new List<Zmogus>();
+        Console.Write("Įveskite vardą: ");
+        string? name = Console.ReadLine();
+        if (string.IsNullOrWhiteSpace(name))
         {
-            zmones.Add(new Zmogus("Artur", 29));
-            zmones.Add(new Zmogus("Tomas", 30));
-            zmones.Add(new Zmogus("Vaida", 26));
-            zmones.Add(new Zmogus("Ignas", -10));
+            name = "Nežinomas";
         }
-        foreach (Zmogus z in zmones)
-    {
-            z.Introduce();
-            z.ArPilnametis();
-    }
+        Console.Write("Įveskit amžių: ");
+        int age;
+
+        if (!int.TryParse(Console.ReadLine(), out age))
+        {
+            Console.WriteLine("Neteisingas amžius");
+            age = 0;
+        }
+
+        Zmogus zmogus = new Zmogus(name, age);
+        Console.WriteLine(zmogus.GetInfo());
+        
+    
     }
     
 
