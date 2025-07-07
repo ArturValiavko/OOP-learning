@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection.Metadata;
 
-class Zmogus //Task3   
+class Zmogus //Task4   
 {
     public string Name { get; set; }
     public int Age { get; set; }
@@ -48,13 +48,13 @@ class Program
 {
     static void Main()
     {
-        Zmogus[] zmones = new Zmogus[]
+       List<Zmogus> zmones = new List<Zmogus>();
         {
-        new Zmogus("Artur", 29),
-        new Zmogus("Tomas", 30),
-        new Zmogus("Vaida", 26),
-        new Zmogus("Ignas",-10)
-        };
+            zmones.Add(new Zmogus("Artur", 29));
+            zmones.Add(new Zmogus("Tomas", 30));
+            zmones.Add(new Zmogus("Vaida", 26));
+            zmones.Add(new Zmogus("Ignas", -10));
+        }
         foreach (Zmogus z in zmones)
     {
             z.Introduce();
