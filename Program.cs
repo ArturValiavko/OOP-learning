@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 
-class Zmogus //Task6
+class Zmogus //Task7
 {
     public string Name { get; set; }
     public int Age { get; set; }
@@ -44,7 +44,7 @@ class Program
     static void Main()
     {
         List<Zmogus> zmones = new List <Zmogus>();
-        
+
         while (true)
         {
 
@@ -62,19 +62,32 @@ class Program
                 Console.WriteLine("Neteisingas amžius");
                 age = 0;
             }
+
             //Zmogus zmogus = new Zmogus(name, age);
             zmones.Add(new Zmogus(name, age));
-
+            
         }
-        Console.WriteLine("\n--- Rezultatai ---\n");
+
+        if (zmones.Count == 0)
+        {
+            Console.WriteLine("Sarašas tuščias");
+            return;
+        }
+
+        var rikiuoti = zmones = zmones.OrderByDescending(z => z.Age).ToList(); 
+
+        Console.WriteLine("\n--- Rezultatai ---");
+        Console.WriteLine("Vyriausias žmogus:");
+        Console.WriteLine(rikiuoti[0].GetInfo());
+        Console.WriteLine("\n Visas sarašas:");
         foreach (Zmogus z in zmones)
         {
             Console.WriteLine(z.GetInfo());
         }
         
-        }
-    
     }
+    
+ }
     
 
   
