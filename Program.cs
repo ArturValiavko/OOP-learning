@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 using System.Dynamic;
 using System.IO.Pipes;
 using System.Reflection;
@@ -8,12 +9,13 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices;
 
-public class Zmogus // Task 9 
+public class Zmogus // Task 10 
 {
     public string Name { get; set; }
     public string Sname { get; set; }
     public int Age { get; set; }
-    public Zmogus(string name, string sname, int age) // KONSTRUKTAS 
+    public int Id { get; set; }
+    public Zmogus(int id, string name, string sname, int age) // KONSTRUKTAS 
     {
         if (age <= 0)
         {
@@ -22,16 +24,19 @@ public class Zmogus // Task 9
         Name = name;
         Sname = sname;
         Age = age;
+        Id = id;  
+        
+        
     }
     public void Print() //Metodas 
     {
         if (Age == 0)
         {
-            Console.WriteLine($"Vardas -{Name}, pavardė -{Sname}, amžius nenurodytas");
+            Console.WriteLine($" {Id} | Vardas -{Name}, pavardė -{Sname}, amžius nenurodytas");
         }
         else
         {
-            Console.WriteLine($"Vardas-{Name}, pavarde - {Sname}, amzius - {Age} ");  
+            Console.WriteLine($" {Id} | Vardas-{Name}, pavarde - {Sname}, amzius - {Age} ");  
         }
         
      } 
@@ -42,9 +47,11 @@ class Program
 {
     public static void Main() // METODAS
     {
+        int id = 0;
         List<Zmogus> abc = new List<Zmogus>(); //abc tai sara6o pavadinimas kuriame yra  
         while (true)
         {
+            id++;
             Console.Write("Įvesk vardą: ");
             string? name = Console.ReadLine();
             if (string.IsNullOrWhiteSpace(name))
@@ -64,7 +71,7 @@ class Program
                 Console.WriteLine("Neteisingai įvestas amžius, priskiriamas 0.");
                 age = 0;
             }
-            abc.Add(new Zmogus(name, sname, age));
+            abc.Add(new Zmogus(id, name, sname, age));
         }
 
         int sarašas = abc.Count();
@@ -72,7 +79,7 @@ class Program
         {
             while (true)
             {
-                Console.Write("\n Kokio žmogaus ieškote?: ");
+                Console.Write("\n Kokio žmogaus ieškote?: (Enter to skip) ");
                 string? ieskomasVardas = Console.ReadLine();
                 if (string.IsNullOrWhiteSpace(ieskomasVardas))
                 {
@@ -95,10 +102,19 @@ class Program
 
         
             double vidurkis = abc.Average(z => z.Age);
-            Console.WriteLine($"Amžiaus vidurkis = {vidurkis:F1} \nVisas sarašas: ");
+            Console.WriteLine($"Amžiaus vidurkis = {vidurkis:F1} \n Visas sarašas: ");
 
-            foreach (Zmogus z in abc)
+            var idmaxmin = abc.OrderByDescending(z => z.Id).ToList();
+            Console.WriteLine("\n ID - max to min ");
+             foreach (Zmogus z in idmaxmin)
             {
+
+                z.Print();
+            }
+
+             Console.WriteLine("\n ID - min to max "); 
+            foreach (Zmogus z in abc)
+            { 
                 z.Print();
             }
         }
