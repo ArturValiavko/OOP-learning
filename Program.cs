@@ -7,24 +7,27 @@ using System.IO.Pipes;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-public class Zmogus // Task 9.3
+public class Zmogus // Task 13
 {
     public string Name { get; set; }
     public string Sname { get; set; }
     public int Age { get; set; }
     public int Id { get; set; }
+    
     public Zmogus(int id, string name, string sname, int age) // KONSTRUKTAS 
     {
         Name = name;
         Sname = sname;
-        Age = age < 0 ? 0: age;
-        Id = id;  
-        
-        
+        Age = age < 0 ? 0 : age;
+        Id = id;
+
+
     }
-    public void Print() //Metodas 
+    
+    public virtual void Print() //Metodas 1 
     {
         if (Age == 0)
         {
@@ -32,12 +35,35 @@ public class Zmogus // Task 9.3
         }
         else
         {
-            Console.WriteLine($" {Id} | Vardas - {Name}, pavardė - {Sname}, amžius - {Age} ");  
+            Console.WriteLine($" {Id} | Vardas - {Name}, pavardė - {Sname}, amžius - {Age}");
         }
-        
-     } 
+
+    } 
 
   }
+
+public class Studentas : Zmogus
+{
+    public string Universitetas { get; set; }
+
+    public Studentas(int id, string name, string sname, int age, string universitetas)// KONSTRUKTAS  2
+    : base(id, name, sname, age)
+    {
+        Universitetas = universitetas;
+    }
+    public override void Print() //Metodas 2
+    {
+        if (Age == 0)
+        {
+            Console.WriteLine($" {Id} | Vardas - {Name}, pavardė - {Sname}, amžius nenurodytas");
+        }
+        else
+        {
+            Console.WriteLine($" {Id} | Vardas - {Name}, pavardė - {Sname}, amžius - {Age}, universitetas - {Universitetas}");
+        }
+
+    } 
+}
 
 class Program
 {
@@ -47,6 +73,7 @@ class Program
         List<Zmogus> abc = new List<Zmogus>(); //abc tai sara6o pavadinimas kuriame yra  
         while (true)
         {
+            
             id++;
             Console.Write("Įvesk vardą: ");
             string? name = Console.ReadLine();
@@ -67,13 +94,30 @@ class Program
                 Console.WriteLine("Neteisingai įvestas amžius, priskiriamas 0");
                 age = 0;
             }
-            abc.Add(new Zmogus(id, name, sname, age));
+            Console.WriteLine("Ar įvestas žmogus studentas?(y/n)");
+            string? arstud = Console.ReadLine();
+            bool yrastud = arstud != null && arstud.Trim().ToLower()=="y";
+
+            if (yrastud)
+            {
+                Console.Write("Įvesk universiteto pavadinimą: ");
+                string? universitetas = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(universitetas))
+                {
+                    universitetas = "Nežinomas";
+                }
+                abc.Add(new Studentas(id, name, sname, age, universitetas));
+            }
+            else
+            {
+                abc.Add(new Zmogus(id, name, sname, age));
+            }
         }
 
         while (true)
         {
-            Console.WriteLine("SARAŠO VALDYMAS (Enter - išeiti) \n 1 - Surasti žmogu sarašė \n 2 - Vidutinis amžius sarašė \n 3 - Surūšiuota pagal ID MaxMin \n 4 - Surūšiuota pagal ID MinMAx \n 5 - Visas sąrašas: \n 6 - Ištrinti įrašą iš sarašo: \n 7 - Redaguoti įrašą pagal ID:  ");
-            Console.Write("Pasirink skaičiu 1-6: ");
+            Console.WriteLine("SARAŠO VALDYMAS  \n 1 - Surasti žmogu sarašė \n 2 - Vidutinis amžius sarašė \n 3 - Surūšiuota pagal ID MaxMin \n 4 - Surūšiuota pagal ID MinMAx \n 5 - Visas sąrašas: \n 6 - Ištrinti įrašą iš sarašo: \n 7 - Redaguoti įrašą pagal ID:  ");
+            Console.Write("Pasirink skaičiu 1-7: (Enter - išeiti) ");
             if (int.TryParse(Console.ReadLine(), out int pasirinkimas))
             {
                 switch (pasirinkimas)
@@ -108,7 +152,7 @@ class Program
                         }
                         else
                         {
-                          Console.WriteLine("Sarašas tuščias");  
+                            Console.WriteLine("Sarašas tuščias");
                         }
                         break;
 
