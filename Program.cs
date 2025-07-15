@@ -9,7 +9,7 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices;
 
-public class Zmogus // Task 9.2
+public class Zmogus // Task 9.3
 {
     public string Name { get; set; }
     public string Sname { get; set; }
@@ -64,7 +64,7 @@ class Program
             Console.Write("Amžių: ");
             if (!int.TryParse(Console.ReadLine(), out int age))
             {
-                Console.WriteLine("Neteisingai įvestas amžius, priskiriamas 0.");
+                Console.WriteLine("Neteisingai įvestas amžius, priskiriamas 0");
                 age = 0;
             }
             abc.Add(new Zmogus(id, name, sname, age));
@@ -72,7 +72,7 @@ class Program
 
         while (true)
         {
-            Console.WriteLine("SARAŠO VALDYMAS (Enter - išeiti) \n 1 - Surasti žmogu sarašė \n 2 - Vidutinis amžius sarašė \n 3 - Surūšiuota pagal ID MaxMin \n 4 - Surūšiuota pagal ID MinMAx \n 5 - Visas sąrašas: \n 6 - Ištrinti įrašą iš sarašo: ");
+            Console.WriteLine("SARAŠO VALDYMAS (Enter - išeiti) \n 1 - Surasti žmogu sarašė \n 2 - Vidutinis amžius sarašė \n 3 - Surūšiuota pagal ID MaxMin \n 4 - Surūšiuota pagal ID MinMAx \n 5 - Visas sąrašas: \n 6 - Ištrinti įrašą iš sarašo: \n 7 - Redaguoti įrašą pagal ID:  ");
             Console.Write("Pasirink skaičiu 1-6: ");
             if (int.TryParse(Console.ReadLine(), out int pasirinkimas))
             {
@@ -167,8 +167,57 @@ class Program
                         }
                         else
                         {
-                            Console.WriteLine("Neteisingas (int) ID ");
+                            Console.WriteLine(" Tokio ID sąraše nėra");
                         }
+                        break;
+
+                    case 7:
+
+                        Console.WriteLine("Įvesk ID kuri nori readaguoti");
+                        if (int.TryParse(Console.ReadLine(), out int Idredagavimas))
+                        {
+                            var zmogusRedaguoti = abc.Find(z => z.Id == Idredagavimas);
+                            if (zmogusRedaguoti != null)
+                            {
+                                Console.Write("Įvesk Nauja Vardą: ");
+                                string? name = Console.ReadLine();
+                                if (!string.IsNullOrWhiteSpace(name))
+                                {
+                                    zmogusRedaguoti.Name = name;
+                                }
+                                Console.Write("Įvesk Nauja Pavardę: ");
+
+                                string? sname = Console.ReadLine();
+
+                                if (!string.IsNullOrWhiteSpace(sname))
+                                {
+                                    zmogusRedaguoti.Sname = sname;
+                                }
+
+                                Console.Write("Įvesk Naują Amžių: ");
+                                string? ageInput = Console.ReadLine();
+                                if (!string.IsNullOrWhiteSpace(ageInput))
+                                {
+
+                                    if (!int.TryParse(ageInput, out int age))
+                                    {
+                                        Console.WriteLine("Neteisingai įvestas amžius, priskiriamas 0");
+                                        age = 0;
+                                    }
+                                    zmogusRedaguoti.Age = age;
+                                    Console.WriteLine("Duomenis atnaujinti");
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Tokio ID sąraše nėra");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Neteisingas ID formatas");
+                        }
+
                         break;
 
                     default:
