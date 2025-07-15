@@ -9,7 +9,7 @@ using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices;
 
-public class Zmogus // Task 10 
+public class Zmogus // Task 9.2
 {
     public string Name { get; set; }
     public string Sname { get; set; }
@@ -17,13 +17,9 @@ public class Zmogus // Task 10
     public int Id { get; set; }
     public Zmogus(int id, string name, string sname, int age) // KONSTRUKTAS 
     {
-        if (age <= 0)
-        {
-            age = 0;
-        }
         Name = name;
         Sname = sname;
-        Age = age;
+        Age = age < 0 ? 0: age;
         Id = id;  
         
         
@@ -32,11 +28,11 @@ public class Zmogus // Task 10
     {
         if (Age == 0)
         {
-            Console.WriteLine($" {Id} | Vardas -{Name}, pavardė -{Sname}, amžius nenurodytas");
+            Console.WriteLine($" {Id} | Vardas - {Name}, pavardė - {Sname}, amžius nenurodytas");
         }
         else
         {
-            Console.WriteLine($" {Id} | Vardas-{Name}, pavarde - {Sname}, amzius - {Age} ");  
+            Console.WriteLine($" {Id} | Vardas - {Name}, pavardė - {Sname}, amžius - {Age} ");  
         }
         
      } 
@@ -74,56 +70,122 @@ class Program
             abc.Add(new Zmogus(id, name, sname, age));
         }
 
-        int sarašas = abc.Count();
-        if (sarašas > 0)
+        while (true)
         {
-            while (true)
+            Console.WriteLine("SARAŠO VALDYMAS (Enter - išeiti) \n 1 - Surasti žmogu sarašė \n 2 - Vidutinis amžius sarašė \n 3 - Surūšiuota pagal ID MaxMin \n 4 - Surūšiuota pagal ID MinMAx \n 5 - Visas sąrašas: \n 6 - Ištrinti įrašą iš sarašo: ");
+            Console.Write("Pasirink skaičiu 1-6: ");
+            if (int.TryParse(Console.ReadLine(), out int pasirinkimas))
             {
-                Console.Write("\n Kokio žmogaus ieškote?: (Enter to skip) ");
-                string? ieskomasVardas = Console.ReadLine();
-                if (string.IsNullOrWhiteSpace(ieskomasVardas))
+                switch (pasirinkimas)
                 {
-                    break;
+                    case 1:
+                        if (abc.Count > 0)
+                        {
+                            while (true)
+                            {
+                                Console.Write("\n Kokio žmogaus ieškote?: (Enter to skip) ");
+                                string? ieskomasVardas = Console.ReadLine();
+                                if (string.IsNullOrWhiteSpace(ieskomasVardas))
+                                {
+                                    break;
+                                }
+                                var rasti = abc.Where(z => z.Name.Equals(ieskomasVardas, StringComparison.OrdinalIgnoreCase)).ToList();
+                                if (rasti.Count > 0)
+                                {
+                                    foreach (Zmogus a in rasti)
+                                    {
+                                        a.Print();
+                                    }
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Tokio žmogaus nėra \n");
+                                    continue;
+                                }
+
+                                break;
+                            }
+                        }
+                        else
+                        {
+                          Console.WriteLine("Sarašas tuščias");  
+                        }
+                        break;
+
+
+                    case 2:
+                        double vidurkis = abc.Average(z => z.Age);
+                        Console.WriteLine($"Amžiaus vidurkis = {vidurkis:F1} \n Visas sarašas: ");
+
+                        break;
+
+                    case 3:
+
+                        var idmaxmin = abc.OrderByDescending(z => z.Id).ToList();
+                        Console.WriteLine("\n ID - max to min ");
+                        foreach (Zmogus z in idmaxmin)
+                        {
+                            z.Print();
+                        }
+
+                        break;
+                    case 4:
+
+                        var idminmax = abc.OrderBy(z => z.Id).ToList();
+                        Console.WriteLine("\n ID - min to max ");
+                        foreach (Zmogus z in idminmax)
+                        {
+                            z.Print();
+                        }
+
+                        break;
+
+                    case 5:
+
+                        Console.WriteLine("\n Visas sąrašas  ");
+                        foreach (Zmogus z in abc)
+                        {
+                            z.Print();
+                        }
+                        break;
+
+                    case 6:
+
+                        Console.WriteLine("Įvesk ID kuri nori pašalinti");
+                        if (int.TryParse(Console.ReadLine(), out int IdRemuve))
+                        {
+                            var zmogusToDelete = abc.FirstOrDefault(z => z.Id == IdRemuve);
+                            if (zmogusToDelete != null)
+                            {
+                                abc.Remove(zmogusToDelete);
+                                Console.WriteLine("Žmogus ištrintas");
+                            }
+                            else
+                            {
+                                Console.WriteLine("ID nerastas");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Neteisingas (int) ID ");
+                        }
+                        break;
+
+                    default:
+
+                        Console.WriteLine("Nebuvo pasirinktas sakičius");
+                        break;
                 }
-                var rasti = abc.Where(z => z.Name.Equals(ieskomasVardas, StringComparison.OrdinalIgnoreCase)).ToList();
-                if (rasti.Count > 0)
-                {
-                    foreach (Zmogus a in rasti)
-                    {
-                        a.Print();
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Tokio žmogaus nėra \n");
-                    break;
-                }
+
+
             }
-
-        
-            double vidurkis = abc.Average(z => z.Age);
-            Console.WriteLine($"Amžiaus vidurkis = {vidurkis:F1} \n Visas sarašas: ");
-
-            var idmaxmin = abc.OrderByDescending(z => z.Id).ToList();
-            Console.WriteLine("\n ID - max to min ");
-             foreach (Zmogus z in idmaxmin)
+            else
             {
-
-                z.Print();
+                break;
             }
 
-             Console.WriteLine("\n ID - min to max "); 
-            foreach (Zmogus z in abc)
-            { 
-                z.Print();
-            }
         }
-        else
-        {
-            Console.WriteLine("Sarašas tuščias");
-        }
-        
-        
+
+
     }
-    
 }
