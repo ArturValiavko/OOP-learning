@@ -1,22 +1,37 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Data;
-using System.Data.Common;
-using System.Dynamic;
-using System.IO.Pipes;
-using System.Reflection;
-using System.Reflection.Metadata;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
 
+public static class FileHelper
+{
+    private static string Filepath = "duomenys.json";
+    public static void SaveToFile(List<Zmogus> zmones)
+    {
+        var options = new JsonSerializerOptions { WriteIndented = true };
+        string json = JsonSerializer.Serialize(zmones, options);
+        File.WriteAllText(Filepath, json);
+    }
+
+    public static List<Zmogus> LoadFromFile()
+    {
+        if (!File.Exists(Filepath))
+        {
+            return new List<Zmogus>();
+        }
+        string json = File.ReadAllText(Filepath);
+        return JsonSerializer.Deserialize<List<Zmogus>>(json);
+    }
+
+}
 public class Zmogus // Task 13
 {
     public string Name { get; set; }
     public string Sname { get; set; }
     public int Age { get; set; }
     public int Id { get; set; }
-    
+
     public Zmogus(int id, string name, string sname, int age) // KONSTRUKTAS 
     {
         Name = name;
@@ -26,21 +41,25 @@ public class Zmogus // Task 13
 
 
     }
-    
-    public virtual void Print() //Metodas 1 
+
+    protected virtual string GetInfo() //Metodas 1 
     {
         if (Age == 0)
         {
-            Console.WriteLine($" {Id} | Vardas - {Name}, pavardė - {Sname}, amžius nenurodytas");
+            return $" {Id} | Vardas - {Name}, pavardė - {Sname}, amžius nenurodytas";
         }
         else
         {
-            Console.WriteLine($" {Id} | Vardas - {Name}, pavardė - {Sname}, amžius - {Age}");
+            return $" {Id} | Vardas - {Name}, pavardė - {Sname}, amžius - {Age}";
         }
 
-    } 
+    }
 
-  }
+    public virtual void Print()
+    {
+        Console.WriteLine(GetInfo());
+    }
+}
 
 public class Studentas : Zmogus
 {
@@ -51,29 +70,26 @@ public class Studentas : Zmogus
     {
         Universitetas = universitetas;
     }
-    public override void Print() //Metodas 2
+    protected override string GetInfo() //Metodas 2
     {
-        if (Age == 0)
+        string baseInfo = base.GetInfo();
+        if (Age != 0)
         {
-            Console.WriteLine($" {Id} | Vardas - {Name}, pavardė - {Sname}, amžius nenurodytas");
+            baseInfo += $", universitetas - {Universitetas}";
         }
-        else
-        {
-            Console.WriteLine($" {Id} | Vardas - {Name}, pavardė - {Sname}, amžius - {Age}, universitetas - {Universitetas}");
-        }
-
-    } 
+        return baseInfo;
+    }
 }
 
 class Program
 {
     public static void Main() // METODAS
     {
-        int id = 0;
-        List<Zmogus> abc = new List<Zmogus>(); //abc tai sara6o pavadinimas kuriame yra  
+        List<Zmogus> abc = FileHelper.LoadFromFile();//abc tai sara6o pavadinimas kuriame yra  
+        int id = abc.Count > 0 ? abc.Max(z => z.Id) : 0;
         while (true)
         {
-            
+
             id++;
             Console.Write("Įvesk vardą: ");
             string? name = Console.ReadLine();
@@ -96,7 +112,7 @@ class Program
             }
             Console.WriteLine("Ar įvestas žmogus studentas?(y/n)");
             string? arstud = Console.ReadLine();
-            bool yrastud = arstud != null && arstud.Trim().ToLower()=="y";
+            bool yrastud = arstud != null && arstud.Trim().ToLower() == "y";
 
             if (yrastud)
             {
@@ -111,7 +127,9 @@ class Program
             else
             {
                 abc.Add(new Zmogus(id, name, sname, age));
+
             }
+            FileHelper.SaveToFile(abc);
         }
 
         while (true)
@@ -196,12 +214,13 @@ class Program
                     case 6:
 
                         Console.WriteLine("Įvesk ID kuri nori pašalinti");
-                        if (int.TryParse(Console.ReadLine(), out int IdRemuve))
+                        if (int.TryParse(Console.ReadLine(), out int IdRemove))
                         {
-                            var zmogusToDelete = abc.FirstOrDefault(z => z.Id == IdRemuve);
+                            var zmogusToDelete = abc.FirstOrDefault(z => z.Id == IdRemove);
                             if (zmogusToDelete != null)
                             {
                                 abc.Remove(zmogusToDelete);
+                                FileHelper.SaveToFile(abc);
                                 Console.WriteLine("Žmogus ištrintas");
                             }
                             else
@@ -228,6 +247,7 @@ class Program
                                 if (!string.IsNullOrWhiteSpace(name))
                                 {
                                     zmogusRedaguoti.Name = name;
+                                    
                                 }
                                 Console.Write("Įvesk Nauja Pavardę: ");
 
@@ -249,8 +269,19 @@ class Program
                                         age = 0;
                                     }
                                     zmogusRedaguoti.Age = age;
-                                    Console.WriteLine("Duomenis atnaujinti");
+                                    
                                 }
+                                if (zmogusRedaguoti is Studentas studentas)
+                                {
+                                    Console.Write("Įvesk Naują universiteto pavadinimą: ");
+                                    string? universitetas = Console.ReadLine();
+                                    if (!string.IsNullOrWhiteSpace(universitetas))
+                                    {
+                                        studentas.Universitetas = universitetas;
+                                    }
+                                }
+                                Console.WriteLine("Duomenis atnaujinti");
+                                FileHelper.SaveToFile(abc);
                             }
                             else
                             {
