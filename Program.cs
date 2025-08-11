@@ -4,31 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 
-class Skaitiklis // Task15
-{
-    public static int skaicius = 0;
-    public Skaitiklis()
-    {
-        skaicius++;
-    }
-    public static void Print()
-    {
-        Console.WriteLine(skaicius);
-    }
-
-}
-class Gyvunas
-{
-    public static int gyvunai = 0;
-    public Gyvunas()
-    {
-        gyvunai++;
-    }
-    public static void Print2()
-    {
-        Console.WriteLine($"Sukurta gyvūnų {gyvunai}");
-    }
-}
+//task 15
 class Produktas
 {
     public static int sekantisID = 1;
@@ -61,48 +37,67 @@ class Program
 {
     static void Main()
     {
-        int bendrasRaidziuKiekis1 = 0;
-        int bendrasRaidziuKiekisSuS = 0;
         List<Produktas> produktai = new List<Produktas>
         {
 
         new Produktas("Obuolys"),
         new Produktas("Bananai"),
         new Produktas("Sviestas"),
-        new Produktas("Sviestas 1")
+        new Produktas("Sviestas1")
         };
 
-        Skaitiklis s1 = new Skaitiklis();
-        Skaitiklis s2 = new Skaitiklis();
-        Skaitiklis s3 = new Skaitiklis();
 
-        Gyvunas x1 = new Gyvunas();
-        Gyvunas x2 = new Gyvunas();
-        Gyvunas x3 = new Gyvunas();
+        Console.Write("Įvekite pirmają raidę filtravimui: ");
+        string? raide = Console.ReadLine();
 
-        foreach (var produktas in produktai)
+        if (!string.IsNullOrWhiteSpace(raide))
         {
-            produktas.SpauzdnitInfo();
-            bendrasRaidziuKiekis1 += produktas.Pavadinimas.Length;
-            if (produktas.Pavadinimas.StartsWith("S", StringComparison.OrdinalIgnoreCase))
+            var produktaiPagalRaide = produktai
+          .Where(p => p.Pavadinimas.StartsWith(raide, StringComparison.OrdinalIgnoreCase))
+          .Select(p => new
+          {
+              Pavadinimas = p.Pavadinimas,
+              raidziuKiekis = p.Pavadinimas.Length
+          })
+          .ToList();
+
+            if (produktaiPagalRaide.Count > 0)
             {
-                bendrasRaidziuKiekisSuS += produktas.Pavadinimas.Length;
+                Console.WriteLine($"Produktai, kurie prasideda raide '{raide}' :");
+                foreach (var p in produktaiPagalRaide)
+                {
+                    Console.WriteLine($"-{p.Pavadinimas}({p.raidziuKiekis} raidės)");
+                }
+                int bendrasRaidziuKiekis = produktaiPagalRaide.Sum(p => p.raidziuKiekis);
+                Console.WriteLine($"\nBendras riadžių kiekis: {bendrasRaidziuKiekis}");
             }
+            else
+            {
+                Console.WriteLine($"\n Produktų, prasidedančių su raide '{raide}', nearasta.");
+            }
+        } 
+        else
+        {
+            Console.WriteLine($"\nNeivesta jokia raidė '{raide}'");
         }
-        Produktas.SpauzdnitBendraKieki();
+      
 
-        Console.Write("Skaitiklis: ");
-        Skaitiklis.Print();
-        Gyvunas.Print2();
 
-        int bendrasRaidziuKiekis = produktai.Sum(p => p.Pavadinimas.Length);
-        Console.WriteLine($"Bendras raidžių kiekis pavadinimuose(LINQ): {bendrasRaidziuKiekis}");
-        Console.WriteLine($"Bendras raidžių kiekis pavadinimuose(foreach): {bendrasRaidziuKiekis1}");
-        int bendrasRaidziuKiekisSuS_LINQ = produktai
-            .Where(p => p.Pavadinimas.StartsWith("S", StringComparison.OrdinalIgnoreCase))
-            .Sum(p => p.Pavadinimas.Length);
-        Console.WriteLine($"Bendras raidžių kiekis pavadinimuose, kurie prasideda S: {bendrasRaidziuKiekisSuS_LINQ}");    
-        Console.WriteLine($"Bendras raidžių kiekis pavadinimuose, kurie prasideda S: {bendrasRaidziuKiekisSuS}");
+        //  var produktaiSuB = produktai
+        //     .Where(p => p.Pavadinimas.StartsWith("B", StringComparison.OrdinalIgnoreCase))
+        //     .Select(p => new
+        //     {
+        //         Pavadinimas = p.Pavadinimas,
+        //         raidziuKiekis1 = p.Pavadinimas.Length
+        //     })
+        //     .ToList();
+        // Console.WriteLine("produktai, kurie prasideda raide B:");
+        // foreach (var p in produktaiPagalRaide)
+        // {
+        //     Console.WriteLine($"-{p.Pavadinimas}({p.raidziuKiekis} raidės)");
+        // }
+        // int bendrasRaidziuKiekis1 = produktaiPagalRaide.Sum(p => p.raidziuKiekis);
+        // Console.WriteLine($"\nBendras riadžių kiekis: {bendrasRaidziuKiekis1}");
     }
 }
 
