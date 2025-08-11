@@ -47,7 +47,7 @@ class Program
         };
 
 
-        Console.Write("Įvekite pirmają raidę filtravimui: ");
+        Console.Write("Įveskite pirmają raidę filtravimui: ");
         string? raide = Console.ReadLine();
 
         if (!string.IsNullOrWhiteSpace(raide))
@@ -73,31 +73,34 @@ class Program
             }
             else
             {
-                Console.WriteLine($"\n Produktų, prasidedančių su raide '{raide}', nearasta.");
+                Console.WriteLine($"\n Produktų, prasidedančių su raide '{raide}', nerasta.");
             }
-        } 
+        }
         else
         {
             Console.WriteLine($"\nNeivesta jokia raidė '{raide}'");
         }
-      
 
+        var grupuotiProduktai = produktai
+            .GroupBy(p => p.Pavadinimas[0].ToString().ToUpper())
+            .Select(g => new
+            {
+                Raide = g.Key,
+                Kiekis = g.Count(),
+                ProduktuSarasas = g.Select(p => p.Pavadinimas).ToList()
+            })
+            .OrderBy(g => g.Raide)
+            .ToList();
+        Console.WriteLine("\nProduktų grupės pagal pirmą raidę: ");
+        foreach (var grupe in grupuotiProduktai)
+        {
+            Console.WriteLine($"{grupe.Raide} - {grupe.Kiekis} produktia: ");
+            foreach (var pavadinimas in grupe.ProduktuSarasas)
+            {
+                Console.WriteLine($"    {pavadinimas}");
+            }
+        }
 
-        //  var produktaiSuB = produktai
-        //     .Where(p => p.Pavadinimas.StartsWith("B", StringComparison.OrdinalIgnoreCase))
-        //     .Select(p => new
-        //     {
-        //         Pavadinimas = p.Pavadinimas,
-        //         raidziuKiekis1 = p.Pavadinimas.Length
-        //     })
-        //     .ToList();
-        // Console.WriteLine("produktai, kurie prasideda raide B:");
-        // foreach (var p in produktaiPagalRaide)
-        // {
-        //     Console.WriteLine($"-{p.Pavadinimas}({p.raidziuKiekis} raidės)");
-        // }
-        // int bendrasRaidziuKiekis1 = produktaiPagalRaide.Sum(p => p.raidziuKiekis);
-        // Console.WriteLine($"\nBendras riadžių kiekis: {bendrasRaidziuKiekis1}");
     }
 }
 
