@@ -37,11 +37,12 @@
 
 ### TOPICS (continued)
    
-7. **Task15 – Task17**  
+6. **Task15 – Task17**  
    Static laukai ir klasės būsena  
    Paprasti LINQ pavyzdžiai (Where, GroupBy, Sum, OrderBy)  
    Delegatai ir funkcijų perdavimas kaip parametras  
    Įvykių (events) modelis, prenumerata ir EventHandler<TEventArgs>
    
  **Task xx-XX** 
+
 
