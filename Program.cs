@@ -112,8 +112,8 @@ class Program
         //var beNeigiamu = PritaikytiSarasui(skaičiai, x => Math.Abs(x));
 
         int suma = Agreguoti(skaičiai, (acc, n) => acc + n, 0);
-        //int sandauga = Agreguoti(skaičiai, (acc, n) => acc * n, 1);
-        long sandauga = Agreguoti(skaičiai, (acc, n) => checked((int)checked((long)acc * n)), 1); 
+        int sandauga = Agreguoti(skaičiai, (acc, n) => acc * n, 1);
+        //long sandauga = Agreguoti(skaičiai, (acc, n) => checked((int)checked((long)acc * n)), 1); // overflow.
         int max = Agreguoti(skaičiai, (acc, n) => Math.Max(acc, n), int.MinValue);
 
         Console.WriteLine("Visas sarašas: " + string.Join (", ", skaičiai)); 
