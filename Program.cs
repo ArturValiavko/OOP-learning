@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Data;
 using System.Dynamic;
+using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 
-//task 17 events 
+//task 17.3 events + lambdas
 
 public class KiekioEventArgs : EventArgs
 {
@@ -16,43 +18,46 @@ public class KiekioEventArgs : EventArgs
         Pavadinimas = pavadinimas;
         Kiekis = kiekis;
         Riba = riba;
+
     }
-}
+ }
 public class Sandelys
 {
     public string Pavadinimas { get; }
-    public int Kiekis { get; private set; }
-    public int Riba { get; }
+    private Dictionary<string, int> produktai = new();
+    private Dictionary<string, int> ribos = new();
 
     public event EventHandler<KiekioEventArgs>? KiekisNukritoZemiauRibos;
 
-    public Sandelys(string pavadinimas, int pradinisKiekis, int riba)
+    public Sandelys(string pavadinimas)
     {
         Pavadinimas = pavadinimas;
-        Kiekis = pradinisKiekis;
-        Riba = riba;
     }
-    public void Paimk(int kiekis)
-    {
-        int buvo = Kiekis;
-        Kiekis += kiekis;
-        Console.WriteLine($"[Sandėlys] '{Pavadinimas}': {kiekis}, kiekis dabar {Kiekis} ");
 
-        if (buvo >= Riba && Kiekis < Riba)
+    public void PridetiProdukta(string pavadinimas, int kiekis, int riba)
+    {
+        produktai[pavadinimas] = kiekis;
+        ribos[pavadinimas] = riba;
+    }
+
+    public void PridekKieki(string pavadinimas, int kiekis)
+    {
+        if (!produktai.ContainsKey(pavadinimas))
         {
-            KiekisNukritoZemiauRibos?.Invoke(this, new KiekioEventArgs(Pavadinimas, Kiekis, Riba));
+            Console.WriteLine($"Produkas '{pavadinimas}' nerastas!");
+            return;
         }
-    }
-}
-public static class Prenumeratoriai
-{
-    public static void IspetiKonsolėje(object? sender, KiekioEventArgs e)
-    {
-        Console.WriteLine($"ĮSPEJIMAS: '{e.Pavadinimas}' kiekis {e.Kiekis} < riba {e.Riba}");
-    }
-    public static void SiustiElLaiška(object? sender, KiekioEventArgs e)
-    {
-        Console.WriteLine($"[Email] Tema: Mažas kiekis - {e.Pavadinimas}. Kiekis: {e.Kiekis}.");
+
+        produktai[pavadinimas] += kiekis;
+        Console.WriteLine($"[Sandėlys] {pavadinimas}: {kiekis:+#;-#;0}, dabar {produktai[pavadinimas]}");
+
+        if (produktai[pavadinimas] < ribos[pavadinimas])
+        {
+            KiekisNukritoZemiauRibos?.Invoke(
+                this,
+                new KiekioEventArgs(pavadinimas, produktai[pavadinimas], ribos[pavadinimas])
+            );
+        }
     }
 }
 
@@ -60,25 +65,28 @@ class Program
 {
     static void Main()
     {
-        var morka = new Sandelys("Morka", pradinisKiekis: 15, riba: 15);
-        var bulvė = new Sandelys("Bulvė", pradinisKiekis: 8, riba: 5);
+        var Sandelys = new Sandelys("Centrinis");
+        Sandelys.PridetiProdukta("Morka", 20, 10);
+        Sandelys.PridetiProdukta("Bulvė", 15, 5);
+        Sandelys.PridetiProdukta("Svogunas", 5, 5);
 
-        morka.KiekisNukritoZemiauRibos += Prenumeratoriai.IspetiKonsolėje;
-        morka.KiekisNukritoZemiauRibos += Prenumeratoriai.SiustiElLaiška;
+        Sandelys.KiekisNukritoZemiauRibos += (s, e) => Console.WriteLine($"įspėjimas: {e.Pavadinimas} ({e.Kiekis} vnt.) nukrito žemiau ribos {e.Riba}");
+        Sandelys.KiekisNukritoZemiauRibos += (s, e) =>
+        {
+            if (e.Pavadinimas == "Morka")
+            {
+                Console.WriteLine($"[Specialus pranešimas] Morkų trūkumas! ({e.Kiekis} vnt.)");
+            }
+        };
 
-        bulvė.KiekisNukritoZemiauRibos += (s, e) =>
-        Console.WriteLine($"LOG: {e.Pavadinimas} nukrito žemiau ribos ({e.Kiekis}/{e.Riba})");
+        Sandelys.KiekisNukritoZemiauRibos += (s, e) =>
+        {
+            string logLine = $"{DateTime.Now}: {e.Pavadinimas} - kiekis {e.Kiekis}, riba {e.Riba}";
+            Console.WriteLine("[LOG įrašas]" + logLine);
+        };
 
-        bulvė.KiekisNukritoZemiauRibos += Prenumeratoriai.IspetiKonsolėje;
-        bulvė.KiekisNukritoZemiauRibos += Prenumeratoriai.SiustiElLaiška;
-
-        morka.Paimk(-3);
-        morka.Paimk(5);
-
-        bulvė.Paimk(-5);
-        bulvė.Paimk(3);
-
-        morka.KiekisNukritoZemiauRibos -= Prenumeratoriai.SiustiElLaiška;
-        morka.Paimk(1);
-    }
+        Sandelys.PridekKieki("Morka", -15);
+        Sandelys.PridekKieki("Bulvė", -12);
+        Sandelys.PridekKieki("Svogunas", -2);
+    }   
 }
